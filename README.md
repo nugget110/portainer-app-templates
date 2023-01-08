@@ -1,2 +1,2 @@
 # portainer-app-templates
-App Templates for portainer for various games
+App Templates for portainer for various purposes
