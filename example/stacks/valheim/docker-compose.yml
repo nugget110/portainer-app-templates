@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  valcord:
+    image: ghcr.io/chris3081/valheim-discord-bot:main 
+    environment:
+      BOT_TOKEN: ${DISCORD_TOKEN}
+      SERVER_ADDRESS: valheim
+      SERVER_PORT: 2455
+      SERVER_NAME: ${DISCORD_BOT_NAME}
+      CHANNEL_NAME: ${CHANNEL_NAME}
+    container_name: valcord
+    networks:
+      - valheim
+    restart: unless-stopped
+  valheim: 
+    image: ghcr.io/lloesche/valheim-server
+    cap_add:
+      - sys_nice
+    volumes: 
+      - ${CONFIG_DIRECTORY}:/config
+      - serverfiles:/opt/valheim
+      - ${BACKUPS_BIND_DIRECTORY}:${BACKUPS_DIRECTORY}
+    ports: 
+      - "${SERVER_PORTS}:${SERVER_PORTS}/udp"
+      - "9001:9001/tcp"
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
+      SERVER_PORT: ${GAME_PORT}
+      SERVER_PASS: ${SERVER_PASS}
+      SERVER_PUBLIC: ${SERVER_PUBLIC}
+      ADMINLIST_IDS: ${ADMINLIST_IDS}
+      TZ: ${TZ}
+      WORLD_NAME: ${WORLD_NAME}
+      STATUS_HTTP: true
+      STATUS_HTTP_PORT: 2455
+      BACKUPS_DIRECTORY: ${BACKUPS_DIRECTORY}
+      VALHEIM_PLUS: ${VALHEIM_PLUS}
+    restart: unless-stopped
+    stop_grace_period: 2m
+
+volumes:
+  serverfiles:
+  
+networks:
+  valheim: {}
